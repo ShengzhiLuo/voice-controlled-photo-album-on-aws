@@ -30,9 +30,15 @@
                 <h3 style="margin-top:30px;text-align:center">Search a photo</h3>
             </div>
             <div class="input-group">
-                <input id="search_query" type="text" class="form-control" placeholder="Search for a photo" name="search">
+                <form action="", method="get", target="", id="search_photos">
+                    <input name="search_query" id = "search_query"  class="form-control" type="text" placeholder="Search Photos Library" autocomplete="off" autofocus>
+                    <button type="button">
+                        <i class="large material-icons" id="mic_search" onclick="voiceSearch()">mic</i>
+                    </button>
+                </form>
+                <!-- <input id="search_query" type="text" class="form-control" placeholder="Search for a photo" name="search"> -->
                 <div class="input-group-btn">
-                    <button class="btn btn-default" type="submit" onclick="searchPhotos()">  <i class="fa fa-search"></i>
+                    <button class="btn btn-default" type="submit" onclick="textSearch()">  <i class="fa fa-search"></i>
                     </button>
                 </div>
             </div>

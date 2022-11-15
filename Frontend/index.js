@@ -1,49 +1,50 @@
-var apigClient = apigClientFactory.newClient();
-// window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition
+var apigClient = apigClientFactory.newClient({apiKey: "0bo5SBm1X01vzyHdsjWvS7g98RUwKRw08pnzhLot"});
+window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition
 
-// function voiceSearch(){
-//     if ('SpeechRecognition' in window) {
-//         console.log("SpeechRecognition is Working");
-//     } else {
-//         console.log("SpeechRecognition is Not Working");
-//     }
+function voiceSearch(){
+    if ('SpeechRecognition' in window) {
+        console.log("SpeechRecognition is Working");
+    } else {
+        console.log("SpeechRecognition is Not Working");
+    }
     
-//     var inputSearchQuery = document.getElementById("search_query");
-//     const recognition = new window.SpeechRecognition();
-//     //recognition.continuous = true;
+    var inputSearchQuery = document.getElementById("search_query");
+    const recognition = new window.SpeechRecognition();
+    //recognition.continuous = true;
 
-//     micButton = document.getElementById("mic_search");  
+    micButton = document.getElementById("mic_search");  
     
-//     if (micButton.innerHTML == "mic") {
-//         recognition.start();
-//     } else if (micButton.innerHTML == "mic_off"){
-//         recognition.stop();
-//     }
+    if (micButton.innerHTML == "mic") {
+        recognition.start();
+    } else if (micButton.innerHTML == "mic_off"){
+        recognition.stop();
+    }
 
-//     recognition.addEventListener("start", function() {
-//         micButton.innerHTML = "mic_off";
-//         console.log("Recording.....");
-//     });
+    recognition.addEventListener("start", function() {
+        micButton.innerHTML = "mic_off";
+        console.log("Recording.....");
+    });
 
-//     recognition.addEventListener("end", function() {
-//         console.log("Stopping recording.");
-//         micButton.innerHTML = "mic";
-//     });
+    recognition.addEventListener("end", function() {
+        console.log("Stopping recording.");
+        micButton.innerHTML = "mic";
+    });
 
-//     recognition.addEventListener("result", resultOfSpeechRecognition);
-//     function resultOfSpeechRecognition(event) {
-//         const current = event.resultIndex;
-//         transcript = event.results[current][0].transcript;
-//         inputSearchQuery.value = transcript;
-//         console.log("transcript : ", transcript)
-//     }
-// }
+    recognition.addEventListener("result", resultOfSpeechRecognition);
+    function resultOfSpeechRecognition(event) {
+        const current = event.resultIndex;
+        transcript = event.results[current][0].transcript;
+        inputSearchQuery.value = transcript;
+        console.log("transcript : ", transcript)
+    }
+}
 
 
 
 
 function textSearch() {
     var searchText = document.getElementById('search_query');
+    console.log(searchText.value);
     if (!searchText.value) {
         alert('Please enter a valid text or voice input!');
     } else {
@@ -92,7 +93,6 @@ function uploadPhoto() {
     // debugger;
     var filePath = (document.getElementById("uploaded_file").value).split("\\");
     var fileName = filePath[filePath.length - 1];
-    debugger
     if (document.getElementById("custom_labels").innerText == "") {
         var custom_labels = document.getElementById("custom_labels").value;
     }
@@ -108,26 +108,31 @@ function uploadPhoto() {
     if ((filePath == "") || (!['png', 'jpg', 'jpeg','JPG'].includes(fileName.split(".")[1]))) {
         alert("Please upload a valid .png/.jpg/.jpeg file!");
     } else {
-
-        var params = {};
+        var params = {
+            'photos': fileName,
+            'Content-Type': file.type,
+            'bucket': '6998photoss',
+            "x-amz-meta-customLabels": custom_labels
+          };
         var additionalParams = {
             headers: {
                 'Access-Control-Allow-Origin': '*',
-                'Content-Type': file.type
+                'Content-Type': file.type,
+                'X-Api-Key': "0bo5SBm1X01vzyHdsjWvS7g98RUwKRw08pnzhLot"
             }
         };
         
         reader.onload = function (event) {
             body = btoa(event.target.result);
             console.log('Reader body : ', body);
-            return apigClient.folderItemPut(params, additionalParams)
-            .then(function(result) {
-                console.log(result);
-            })
-            .catch(function(error) {
-                console.log(error);
-            })
+            return apigClient.bucketPhotosPut(params, body , additionalParams).then(function(res){
+                if (res.status == 200)
+                {
+                  document.getElementById("uploadText").innerHTML = "Image Uploaded  !!!"
+                  document.getElementById("uploadText").style.display = "block";
+                }
+              })
+            }
         }
         reader.readAsBinaryString(file);
     }
-}
