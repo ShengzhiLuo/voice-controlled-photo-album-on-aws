@@ -69,7 +69,8 @@ function searchPhotos(searchText) {
         .then(function(result) {
             console.log("Result : ", result);
 
-            image_paths = result["data"]["body"]["imagePaths"];
+            // image_paths = result["data"]["body"]["imagePaths"];
+            image_paths = result["data"];
             console.log("image_paths : ", image_paths);
 
             var photosDiv = document.getElementById("photos_search_results");
@@ -108,6 +109,9 @@ function uploadPhoto() {
     if ((filePath == "") || (!['png', 'jpg', 'jpeg','JPG'].includes(fileName.split(".")[1]))) {
         alert("Please upload a valid .png/.jpg/.jpeg file!");
     } else {
+
+        fileName = fileName.split(".")[0] + ".jpeg";
+        console.log(fileName);
         var params = {
             'photos': fileName,
             'Content-Type': file.type,

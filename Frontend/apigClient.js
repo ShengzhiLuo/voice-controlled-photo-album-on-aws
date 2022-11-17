@@ -140,12 +140,12 @@ apigClientFactory.newClient = function (config) {
     apigClient.bucketPhotosOptions = function (params, body, additionalParams) {
         if(additionalParams === undefined) { additionalParams = {}; }
         
-        apiGateway.core.utils.assertParametersDefined(params, [], ['body']);
+        apiGateway.core.utils.assertParametersDefined(params, ['Access-Control-Request-Headers', 'Access-Control-Allow-Headers', 'x-amz-meta-customLabels'], ['body']);
         
         var bucketPhotosOptionsRequest = {
             verb: 'options'.toUpperCase(),
             path: pathComponent + uritemplate('/{bucket}/{photos}').expand(apiGateway.core.utils.parseParametersToObject(params, [])),
-            headers: apiGateway.core.utils.parseParametersToObject(params, []),
+            headers: apiGateway.core.utils.parseParametersToObject(params, ['Access-Control-Request-Headers', 'Access-Control-Allow-Headers', 'x-amz-meta-customLabels']),
             queryParams: apiGateway.core.utils.parseParametersToObject(params, []),
             body: body
         };

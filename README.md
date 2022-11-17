@@ -91,3 +91,5 @@ There are 5 components:
 	c. Set up the bucket for static website hosting.
 	d. Upload the frontend files to the bucket (B2).
 	e. Integrate the API Gateway-generated SDK (SDK1) into the frontend, to connect your API.
+
+### 6. Voice 
