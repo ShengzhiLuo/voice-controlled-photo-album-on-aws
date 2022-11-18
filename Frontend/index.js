@@ -116,13 +116,17 @@ function uploadPhoto() {
             'photos': fileName,
             'Content-Type': file.type,
             'bucket': '6998photoss',
-            "x-amz-meta-customLabels": custom_labels
+            "x-amz-meta-customLabels": custom_labels,
+            'Access-Control-Allow-Headers': '*',
+            'Access-Control-Request-Headers': '*',
+            'Access-Control-Allow-Origin': '*'
           };
         var additionalParams = {
             headers: {
-                'Access-Control-Allow-Origin': '*',
+                // 'Access-Control-Allow-Origin': '*',
                 'Content-Type': file.type,
-                'X-Api-Key': "0bo5SBm1X01vzyHdsjWvS7g98RUwKRw08pnzhLot"
+                // 'X-Api-Key': "0bo5SBm1X01vzyHdsjWvS7g98RUwKRw08pnzhLot"
+                // "x-amz-meta-customLabels": custom_labels
             }
         };
         
