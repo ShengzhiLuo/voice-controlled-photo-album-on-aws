@@ -97,8 +97,6 @@ function uploadPhoto() {
     if (document.getElementById("custom_labels").innerText == "") {
         var custom_labels = document.getElementById("custom_labels").value;
     }
-    console.log(fileName);
-    console.log(custom_labels);
     // console.log(custom_labels);
 
     var reader = new FileReader();
