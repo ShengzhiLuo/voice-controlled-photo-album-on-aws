@@ -1,5 +1,5 @@
 # voice-controlled-photo-album-on-aws
-Photo album web application that can be searched using natural language through both text and voice.
+[Photo album](http://search-photos-frontend.s3-website-us-east-1.amazonaws.com/) web application that can be searched using natural language through both text and voice.
 This application uses Lex, ElasticSearch, and Rekognition to create an intelligent search layer to query your photos for people, objects, actions, landmarks and more.
 
 
@@ -29,7 +29,8 @@ There are 5 components:
 
 	d. Implement the indexing Lambda function (LF1):
 		i. Given a S3 PUT event (E1) detect labels in the image, using Rekognition  (“detectLabels” method).
-		ii. Store a JSON object in an ElasticSearch index (“photos”) that references the S3 object from the PUT event (E1) and an array of string labels, one for each label detected by Rekognition.
+		ii. Use the S3 SDK’s headObject method 7 to retrieve the S3 metadata created at the object’s upload time. Retrieve the x-amz-meta-customLabels metadata field, if applicable, and create a JSON array (A1) with the labels.
+		iii. Store a JSON object in an ElasticSearch index (“photos”) that references the S3 object from the PUT event (E1) and an array of string labels, one for each label detected by Rekognition.
 
 			Use the following schema for the JSON object:
 
@@ -67,12 +68,11 @@ There are 5 components:
 ### 4.	Build the API layer
 
 	a. Build an API using API Gateway.
-		i. The Swagger API documentation for the API can be found here:
-		   https://github.com/001000001/ai-photo-search-columbia-f2018/blob/master/swagger.yaml
-
+		i. Build the Swagger API documentation for the API.
 	b. The API should have two methods:
 		i. PUT /photos
 		Set up the method as an Amazon S3 Proxy . This will allow API Gateway to forward your PUT request directly to S3.
+			* Use a custom x-amz-meta-customLabels HTTP header to include any custom labels the user specifies at upload time.
 
 		ii. GET /search?q={query text}
 		Connect this method to the search Lambda function (LF2).
@@ -87,9 +87,21 @@ There are 5 components:
 		i. Make search requests to the GET /search endpoint
 		ii. Display the results (photos) resulting from the query
 		iii. Upload new photos using the PUT /photos
+			* In the upload form, allow the user to specify one or more custom labels, that will be appended to the list of labels detected automatically by Rekognition (see 2.d.iii above). These custom labels should be converted to a comma-separated list and uploaded as part of the S3 object’s metadata 9 using a x-amz-meta-customLabels metadata HTTP header. For instance, if you specify two custom labels at upload time, “Sam” an “Sally”, the metadata HTTP header should look like: ‘x-amz-meta-customLabels’: ‘Sam, Sally’
 	b. Create a S3 bucket for your frontend (B2).
 	c. Set up the bucket for static website hosting.
 	d. Upload the frontend files to the bucket (B2).
 	e. Integrate the API Gateway-generated SDK (SDK1) into the frontend, to connect your API.
 
 ### 6. Voice 
+	a. Give the frontend user the choice to use voice rather than text to perform the search.
+	b. Use Amazon Transcribe 10 on the frontend to transcribe speech to text (STT) in real time 11 , then use the transcribed text to perform the search, using the same API like in the previous steps.
+	c. Note: You can use a Google-like UI (see below) for implementing the search: 1. input field for text searches and 2. microphone icon for voice interactions. 
+
+### 7. Deploy your code using AWS CodePipeline
+	a. Define a pipeline (P1) in AWS CodePipeline that builds and deploys the code for/to all your Lambda functions
+	b. Define a pipeline (P2) in AWS CodePipeline that builds and deploys your frontend code to its corresponding S3 bucket
+
+### 8. Create a AWS CloudFormation 13 template for the stack
+	a. Create a CloudFormation template (T1) to represent all the infrastructure resources (ex. Lambdas, OpenSearch, API Gateway, CodePipeline, etc.) and permissions (IAM policies, roles, etc.).
+
