@@ -4,6 +4,7 @@ This application uses Lex, ElasticSearch, and Rekognition to create an intellige
 
 
 ## Architecture
+![frontend](Images/frontend.png)
 ![screenshot](Images/architecture.png)
 
 ## Steps:
