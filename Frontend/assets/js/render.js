@@ -7,12 +7,12 @@ function searchPhoto()
                      apiKey: "0bo5SBm1X01vzyHdsjWvS7g98RUwKRw08pnzhLot"
         });
 
-    var user_message = document.getElementById('note-textarea').value;
+    var user_message = document.getElementById('search_query').value;
 
     var body = { };
     var params = {q : user_message};
     var additionalParams = {headers: {
-    'Content-Type':"application/json"
+      'Content-Type': "application/json"
   }};
 
     apigClient.searchGet(params, body , additionalParams).then(function(res){
@@ -22,20 +22,20 @@ function searchPhoto()
         length_of_response = resp_data.length;
         if(length_of_response == 0)
         {
-          document.getElementById("displaytext").innerHTML = "No Images Found !!!"
-          document.getElementById("displaytext").style.display = "block";
+          document.getElementById('photos_search_results').innerHTML = "No Images Found !!!"
+          document.getElementById('photos_search_results').style.display = "block";
 
         }
 
         resp_data.forEach( function(obj) {
 
             var img = new Image();
-            img.src = "https://s3.amazonaws.com/photoboy/"+obj;
+            img.src = "https://s3.amazonaws.com/6998photoss/"+obj;
             img.setAttribute("class", "banner-img");
             img.setAttribute("alt", "effy");
-            document.getElementById("displaytext").innerHTML = "Images returned are : "
+            document.getElementById('photos_search_results').innerHTML = "Images returned are : "
             document.getElementById("img-container").appendChild(img);
-            document.getElementById("displaytext").style.display = "block";
+            document.getElementById('photos_search_results').style.display = "block";
 
           });
       }).catch( function(result){
@@ -67,7 +67,7 @@ function getBase64(file) {
 function uploadPhoto()
 {
    // var file_data = $("#file_path").prop("files")[0];
-   var file = document.getElementById('file_path').files[0];
+   var file = document.getElementById('uploaded_file').files[0];
    const reader = new FileReader();
 
    var file_data;
@@ -83,11 +83,12 @@ function uploadPhoto()
      // var x = data.split("\\")
      // var filename = x[x.length-1]
      var file_type = file.type + ";base64"
-     var custom_label = document.getElementById('customlabels').value;
+     var custom_label = document.getElementById("custom_labels").value;
      var body = data;
      var params = {"key" : file.name, "bucket" : "6998photoss", "Content-Type" : file.type};
      var additionalParams = {headers: {"x-amz-meta-customLabels": custom_label} };
-     apigClient.uploadBucketKeyPut(params, body , additionalParams).then(function(res){
+      //  axios.put("https://dlax6rsc77.execute-api.us-east-1.amazonaws.com/test3/" + file.name, body, additionalParams).then(function (res) {
+        apigClient.bucketPhotosPut(params, body , additionalParams).then(function(res){
        if (res.status == 200)
        {
          document.getElementById("uploadText").innerHTML = "Image Uploaded  !!!"
